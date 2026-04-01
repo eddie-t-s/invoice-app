@@ -1,15 +1,25 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import './Login.css';
 
 function Login() {
-  const { login } = useAuth();
+  const { user, login, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+  const userAtPageOpen = useRef(user);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (userAtPageOpen.current) {
+      logout().catch((err) => {
+        console.error('Error logging out on login page:', err);
+      });
+    }
+  }, [logout]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,7 +28,8 @@ function Login() {
 
     try {
       await login(email, password);
-      navigate('/dashboard');
+      const redirectTo = location.state?.from || '/dashboard';
+      navigate(redirectTo, { replace: true });
     } catch (err) {
       setError(err.message);
     } finally {
