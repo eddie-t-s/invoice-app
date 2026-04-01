@@ -1,0 +1,160 @@
+.invoice-details {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+.invoice-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.invoice-header h1 {
+  font-size: 2rem;
+  color: #2c3e50;
+}
+
+.invoice-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.status-select {
+  padding: 10px;
+  border: 1px solid #bdc3c7;
+  border-radius: 5px;
+}
+
+.invoice-preview {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+  padding: 40px;
+  margin-bottom: 30px;
+}
+
+.invoice-container {
+  font-family: Arial, sans-serif;
+}
+
+.invoice-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 40px;
+  padding-bottom: 20px;
+  border-bottom: 3px solid #2c3e50;
+}
+
+.company-info h2 {
+  font-size: 2rem;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.invoice-meta {
+  text-align: right;
+}
+
+.invoice-meta p {
+  margin: 5px 0;
+  color: #7f8c8d;
+}
+
+.bill-section {
+  margin: 30px 0;
+}
+
+.bill-section h3 {
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.bill-section p {
+  margin: 5px 0;
+  color: #555;
+}
+
+.items-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 30px 0;
+}
+
+.items-table th {
+  background-color: #34495e;
+  color: white;
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+}
+
+.items-table td {
+  padding: 12px;
+  border-bottom: 1px solid #ecf0f1;
+}
+
+.items-table tbody tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+.totals-section {
+  margin: 30px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 300px;
+}
+
+.totals-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 8px 0;
+  color: #2c3e50;
+}
+
+.totals-row span:last-child {
+  text-align: right;
+  min-width: 100px;
+}
+
+.totals-row.total {
+  border-top: 2px solid #2c3e50;
+  border-bottom: 3px double #2c3e50;
+  font-size: 1.3rem;
+  font-weight: bold;
+  padding: 15px 0;
+}
+
+.notes-section {
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #ecf0f1;
+}
+
+.notes-section h3 {
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.notes-section p {
+  color: #7f8c8d;
+  line-height: 1.6;
+}
+
+@media print {
+  .invoice-actions {
+    display: none;
+  }
+  
+  .invoice-preview {
+    box-shadow: none;
+    padding: 0;
+  }
+}
