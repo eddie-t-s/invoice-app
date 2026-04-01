@@ -14,7 +14,7 @@ function CreateInvoice() {
   const [invoiceNumberLoaded, setInvoiceNumberLoaded] = useState(false);
 
   const items = [
-    { description: 'RED SNOW', price: 400 },
+    { description: 'RED SNOW', price: 499 },
     { description: 'ZF DARK COAST', price: 370 },
     { description: 'ZF GOLD COAST', price: 370 },
     { description: '12AM FOLD', price: 400 },
