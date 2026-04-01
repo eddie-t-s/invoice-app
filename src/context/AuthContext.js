@@ -8,22 +8,13 @@ const ADMIN_CREDENTIALS = {
 };
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const storedUser = localStorage.getItem('invoiceAppUser');
-      return storedUser ? JSON.parse(storedUser) : null;
-    }
-    return null;
-  });
-  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null);
+  const loading = false;
 
   const login = (email, password) => {
     if (email === ADMIN_CREDENTIALS.email && password === ADMIN_CREDENTIALS.password) {
       const loggedUser = { uid: 'admin-local', email: 'admin' };
       setUser(loggedUser);
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('invoiceAppUser', JSON.stringify(loggedUser));
-      }
       return Promise.resolve(loggedUser);
     }
 
@@ -36,9 +27,6 @@ export const AuthProvider = ({ children }) => {
 
   const logout = () => {
     setUser(null);
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('invoiceAppUser');
-    }
     return Promise.resolve();
   };
 

@@ -94,7 +94,7 @@ function InvoiceDetails() {
 
   const formatCurrency = (value) => {
     const numeric = Number(value) || 0;
-    return `GHc ${numeric.toFixed(2)}`;
+    return `₵ ${numeric.toFixed(2)}`;
   };
 
   const formatDate = (value) => {
@@ -114,7 +114,7 @@ function InvoiceDetails() {
     let y = 0;
 
     const safeText = (v) => (v ? String(v) : '-');
-    const currency  = (v) => `GHc ${(Number(v) || 0).toFixed(2)}`;
+    const currency  = (v) => `₵ ${(Number(v) || 0).toFixed(2)}`;
     const brandDark   = [15,   15,  15];
     const brandRed    = [170,  20,  20];
     const brandGold   = [212, 160,  23];
@@ -523,8 +523,8 @@ function InvoiceDetails() {
                 <tr key={index}>
                   <td>{item.description}</td>
                   <td>{item.quantity}</td>
-                  <td>${item.unitPrice.toFixed(2)}</td>
-                  <td>${(item.quantity * item.unitPrice).toFixed(2)}</td>
+                  <td>₵ {item.unitPrice.toFixed(2)}</td>
+                  <td>₵ {(item.quantity * item.unitPrice).toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>
@@ -534,23 +534,23 @@ function InvoiceDetails() {
           <div className="totals-section">
             <div className="totals-row">
               <span>Subtotal:</span>
-              <span>${invoice.subtotal.toFixed(2)}</span>
+              <span>₵ {invoice.subtotal.toFixed(2)}</span>
             </div>
             {invoice.taxAmount > 0 && (
               <div className="totals-row">
                 <span>Tax ({invoice.tax}%):</span>
-                <span>${invoice.taxAmount.toFixed(2)}</span>
+                <span>₵ {invoice.taxAmount.toFixed(2)}</span>
               </div>
             )}
             {invoice.discountAmount > 0 && (
               <div className="totals-row">
                 <span>Discount ({invoice.discount}%):</span>
-                <span>-${invoice.discountAmount.toFixed(2)}</span>
+                <span>-₵ {invoice.discountAmount.toFixed(2)}</span>
               </div>
             )}
             <div className="totals-row total">
               <span>Total:</span>
-              <span>${invoice.total.toFixed(2)}</span>
+              <span>₵ {invoice.total.toFixed(2)}</span>
             </div>
           </div>
 

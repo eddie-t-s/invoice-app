@@ -136,9 +136,9 @@ function CreateInvoice() {
     invoiceData.items.forEach((item) => {
       doc.text(item.description || '-', marginLeft, yPos);
       doc.text(`${item.quantity}`, 280, yPos);
-      doc.text(`GHc ${item.unitPrice.toFixed(2)}`, 340, yPos);
+      doc.text(`₵ ${item.unitPrice.toFixed(2)}`, 340, yPos);
       const amount = (item.quantity * item.unitPrice).toFixed(2);
-      doc.text(`GHc ${amount}`, 430, yPos);
+      doc.text(`₵ ${amount}`, 430, yPos);
       yPos += 15;
       if (yPos > 760) {
         doc.addPage();
@@ -147,9 +147,9 @@ function CreateInvoice() {
     });
 
     yPos += 20;
-    doc.text(`Subtotal: GHc ${invoiceData.subtotal.toFixed(2)}`, marginLeft, yPos);
+    doc.text(`Subtotal: ₵ ${invoiceData.subtotal.toFixed(2)}`, marginLeft, yPos);
     yPos += 15;
-    doc.text(`Total: GHc ${invoiceData.total.toFixed(2)}`, marginLeft, yPos);
+    doc.text(`Total: ₵ ${invoiceData.total.toFixed(2)}`, marginLeft, yPos);
 
     const pdfUrl = doc.output('bloburl');
     window.open(pdfUrl, '_blank');
@@ -307,7 +307,7 @@ function CreateInvoice() {
                         }}
                       >
                         <option value="">Select Item</option>
-                        {items.map(it => <option key={it.description} value={it.description}>{it.description} - GHc {it.price}</option>)}
+                        {items.map(it => <option key={it.description} value={it.description}>{it.description} - ₵ {it.price}</option>)}
                       </select>
                     </td>
                     <td>
@@ -327,7 +327,7 @@ function CreateInvoice() {
                         onChange={(e) => updateItem(index, 'unitPrice', parseFloat(e.target.value))}
                       />
                     </td>
-                    <td>GHc {(item.quantity * item.unitPrice).toFixed(2)}</td>
+                    <td>₵ {(item.quantity * item.unitPrice).toFixed(2)}</td>
                     <td>
                       <button
                         type="button"
@@ -348,11 +348,11 @@ function CreateInvoice() {
         <section className="form-section calculations">
           <div className="calc-row">
             <label>Subtotal:</label>
-            <span>GHc {calculateSubtotal().toFixed(2)}</span>
+            <span>₵ {calculateSubtotal().toFixed(2)}</span>
           </div>
           <div className="calc-row total">
             <label>Total:</label>
-            <span>GHc {calculateTotal().toFixed(2)}</span>
+            <span>₵ {calculateTotal().toFixed(2)}</span>
           </div>
         </section>
 

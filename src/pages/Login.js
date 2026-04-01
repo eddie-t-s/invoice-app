@@ -6,8 +6,8 @@ import './Login.css';
 function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState('admin');
-  const [password, setPassword] = useState('123zerofold');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -37,6 +37,7 @@ function Login() {
               type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              autoComplete="off"
               required
             />
           </div>
@@ -46,6 +47,7 @@ function Login() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              autoComplete="new-password"
               required
             />
           </div>
