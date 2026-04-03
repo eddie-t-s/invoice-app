@@ -11,6 +11,23 @@ function Dashboard() {
   const [invoices, setInvoices] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const sortInvoicesForDisplay = (sourceInvoices) => {
+    return [...sourceInvoices].sort((a, b) => {
+      const aStatus = resolveStatus(a);
+      const bStatus = resolveStatus(b);
+      const aIsIncomplete = aStatus === 'void';
+      const bIsIncomplete = bStatus === 'void';
+
+      if (aIsIncomplete !== bIsIncomplete) {
+        return aIsIncomplete ? 1 : -1;
+      }
+
+      const aDate = a?.createdAt ? new Date(a.createdAt).getTime() : 0;
+      const bDate = b?.createdAt ? new Date(b.createdAt).getTime() : 0;
+      return bDate - aDate;
+    });
+  };
+
   const isInvoiceIncomplete = (invoice) => {
     if (!invoice) return true;
     const hasClient = Boolean(invoice.clientName && invoice.clientName.trim());
@@ -30,8 +47,11 @@ function Dashboard() {
     return isInvoiceIncomplete(invoice) ? 'void' : (invoice.status || 'draft');
   };
 
+  const isSalesInvoice = (invoice) => resolveStatus(invoice) === 'paid';
+
   const buildExportRows = (sourceInvoices) => sourceInvoices.map(inv => {
     const status = resolveStatus(inv);
+    const normalizedStatus = String(status || 'draft').toLowerCase();
     return {
       'Invoice #': inv.invoiceNumber || '',
       'Client': inv.clientName || '',
@@ -40,21 +60,24 @@ function Dashboard() {
       'Amount': inv.total != null ? Number(inv.total) : 0,
       'Date': inv.createdAt ? new Date(inv.createdAt).toLocaleDateString() : '',
       'Payment Method': inv.paymentMethod || '',
-      'Status': status === 'void' ? 'voided' : status,
+      'Status': normalizedStatus === 'void' ? 'voided' : normalizedStatus,
+      'Included In Sales': normalizedStatus === 'paid' ? 'yes' : 'no',
     };
   });
 
   const exportRecords = (records, sheetName, filename) => {
-    if (records.length === 0) {
-      alert('No invoices found for the selected period.');
+    const salesRecords = records.filter(isSalesInvoice);
+
+    if (salesRecords.length === 0) {
+      alert('No completed sales invoices found.');
       return;
     }
 
-    const rows = buildExportRows(records);
+    const rows = buildExportRows(salesRecords);
     const worksheet = XLSX.utils.json_to_sheet(rows);
     worksheet['!cols'] = [
       { wch: 14 }, { wch: 22 }, { wch: 16 }, { wch: 28 },
-      { wch: 12 }, { wch: 14 }, { wch: 16 }, { wch: 12 },
+      { wch: 12 }, { wch: 14 }, { wch: 16 }, { wch: 12 }, { wch: 16 },
     ];
 
     const workbook = XLSX.utils.book_new();
@@ -82,7 +105,7 @@ function Dashboard() {
             createdAt: isNaN(createdAtDate.getTime()) ? new Date() : createdAtDate,
           };
         });
-        setInvoices(invoicesData.sort((a, b) => b.createdAt - a.createdAt));
+        setInvoices(sortInvoicesForDisplay(invoicesData));
       } catch (error) {
         console.error('Error fetching invoices:', error);
       } finally {
@@ -97,48 +120,16 @@ function Dashboard() {
     if (window.confirm('Are you sure you want to delete this invoice?')) {
       try {
         await deleteDoc(doc(db, 'invoices', docId));
-        setInvoices(invoices.filter(inv => inv.docId !== docId));
+        setInvoices(prevInvoices => sortInvoicesForDisplay(prevInvoices.filter(inv => inv.docId !== docId)));
       } catch (error) {
         console.error('Error deleting invoice:', error);
       }
     }
   };
 
-  const generateDailySalesRecord = () => {
-    const defaultDate = new Date().toISOString().slice(0, 10);
-    const selectedDate = window.prompt('Enter day to export (YYYY-MM-DD):', defaultDate);
-    if (!selectedDate) return;
-
-    const targetDate = new Date(`${selectedDate}T00:00:00`);
-    if (Number.isNaN(targetDate.getTime())) {
-      alert('Invalid date format. Use YYYY-MM-DD.');
-      return;
-    }
-
-    const filtered = invoices.filter(inv => {
-      const d = inv.createdAt ? new Date(inv.createdAt) : null;
-      return d && d.toISOString().slice(0, 10) === selectedDate;
-    });
-
-    exportRecords(filtered, `Daily ${selectedDate}`, `daily-sales-${selectedDate}.xlsx`);
-  };
-
-  const generateMonthlySalesRecord = () => {
-    const defaultMonth = new Date().toISOString().slice(0, 7);
-    const selectedMonth = window.prompt('Enter month to export (YYYY-MM):', defaultMonth);
-    if (!selectedMonth) return;
-
-    if (!/^\d{4}-\d{2}$/.test(selectedMonth)) {
-      alert('Invalid month format. Use YYYY-MM.');
-      return;
-    }
-
-    const filtered = invoices.filter(inv => {
-      const d = inv.createdAt ? new Date(inv.createdAt) : null;
-      return d && d.toISOString().slice(0, 7) === selectedMonth;
-    });
-
-    exportRecords(filtered, `Monthly ${selectedMonth}`, `monthly-sales-${selectedMonth}.xlsx`);
+  const generateAllSalesRecord = () => {
+    const dateStamp = new Date().toISOString().slice(0, 10);
+    exportRecords(invoices, 'All Sales', `all-sales-${dateStamp}.xlsx`);
   };
 
   if (loading) return <div className="loading">Loading invoices...</div>;
@@ -155,8 +146,7 @@ function Dashboard() {
     <div className="dashboard">
       <div className="dashboard-header">
         <Link to="/create" className="btn btn-primary">+ Create New Invoice</Link>
-        <button onClick={generateDailySalesRecord} className="btn btn-secondary">Generate Daily Sales Record</button>
-        <button onClick={generateMonthlySalesRecord} className="btn btn-secondary">Generate Monthly Sales Record</button>
+        <button onClick={generateAllSalesRecord} className="btn btn-secondary">Generate All Sales Record</button>
       </div>
 
       {invoices.length === 0 ? (
