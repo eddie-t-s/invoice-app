@@ -48,7 +48,7 @@ const createTransporter = () => {
 
 const safeNumber = (value) => Number(value) || 0;
 
-const formatCurrency = (value) => `₵ ${safeNumber(value).toFixed(2)}`;
+const formatCurrency = (value) => `GHC ${safeNumber(value).toFixed(2)}`;
 
 const formatDate = (value) => {
   if (!value) {

@@ -64,6 +64,19 @@ function InvoiceDetails() {
           return;
         }
 
+        const invoiceNumberQuery = query(invoicesRef, where('invoiceNumber', '==', id));
+        const invoiceNumberSnapshot = await getDocs(invoiceNumberQuery);
+
+        if (!invoiceNumberSnapshot.empty) {
+          const fallbackDoc = invoiceNumberSnapshot.docs[0];
+          const invoiceData = fallbackDoc.data();
+          console.log('Invoice found by invoice number:', fallbackDoc.id);
+          setInvoice(invoiceData);
+          setInvoiceDocId(fallbackDoc.id);
+          setStatus(invoiceData.status || 'draft');
+          return;
+        }
+
         console.warn('Invoice document does not exist in Firestore');
       } catch (error) {
         console.error('Error fetching invoice:', error);
@@ -94,7 +107,7 @@ function InvoiceDetails() {
 
   const formatCurrency = (value) => {
     const numeric = Number(value) || 0;
-    return `₵ ${numeric.toFixed(2)}`;
+    return `GHC ${numeric.toFixed(2)}`;
   };
 
   const formatDate = (value) => {
@@ -114,7 +127,7 @@ function InvoiceDetails() {
     let y = 0;
 
     const safeText = (v) => (v ? String(v) : '-');
-    const currency  = (v) => `₵ ${(Number(v) || 0).toFixed(2)}`;
+    const currency  = (v) => `GHC ${(Number(v) || 0).toFixed(2)}`;
     const brandDark   = [15,   15,  15];
     const brandRed    = [170,  20,  20];
     const brandGold   = [212, 160,  23];
@@ -477,6 +490,7 @@ function InvoiceDetails() {
             <option value="draft">Draft</option>
             <option value="sent">Sent</option>
             <option value="paid">Paid</option>
+            <option value="void">Void</option>
           </select>
           <button onClick={generatePDFReceipt} className="btn btn-primary">🧾 View Receipt (PDF)</button>
           <button onClick={downloadPDF} className="btn btn-secondary">⬇️ Download Visible Receipt</button>
@@ -523,8 +537,8 @@ function InvoiceDetails() {
                 <tr key={index}>
                   <td>{item.description}</td>
                   <td>{item.quantity}</td>
-                  <td>₵ {item.unitPrice.toFixed(2)}</td>
-                  <td>₵ {(item.quantity * item.unitPrice).toFixed(2)}</td>
+                  <td>GHC {item.unitPrice.toFixed(2)}</td>
+                  <td>GHC {(item.quantity * item.unitPrice).toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>
@@ -534,23 +548,23 @@ function InvoiceDetails() {
           <div className="totals-section">
             <div className="totals-row">
               <span>Subtotal:</span>
-              <span>₵ {invoice.subtotal.toFixed(2)}</span>
+              <span>GHC {invoice.subtotal.toFixed(2)}</span>
             </div>
             {invoice.taxAmount > 0 && (
               <div className="totals-row">
                 <span>Tax ({invoice.tax}%):</span>
-                <span>₵ {invoice.taxAmount.toFixed(2)}</span>
+                <span>GHC {invoice.taxAmount.toFixed(2)}</span>
               </div>
             )}
             {invoice.discountAmount > 0 && (
               <div className="totals-row">
                 <span>Discount ({invoice.discount}%):</span>
-                <span>-₵ {invoice.discountAmount.toFixed(2)}</span>
+                <span>-GHC {invoice.discountAmount.toFixed(2)}</span>
               </div>
             )}
             <div className="totals-row total">
               <span>Total:</span>
-              <span>₵ {invoice.total.toFixed(2)}</span>
+              <span>GHC {invoice.total.toFixed(2)}</span>
             </div>
           </div>
 

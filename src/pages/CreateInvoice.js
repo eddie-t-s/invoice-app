@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { db } from '../firebase';
 import { collection, addDoc, getDocs, query, orderBy, limit } from 'firebase/firestore';
 import { useAuth } from '../context/AuthContext';
-import { v4 as uuidv4 } from 'uuid';
 import { jsPDF } from 'jspdf';
 import './CreateInvoice.css';
 
@@ -136,9 +135,9 @@ function CreateInvoice() {
     invoiceData.items.forEach((item) => {
       doc.text(item.description || '-', marginLeft, yPos);
       doc.text(`${item.quantity}`, 280, yPos);
-      doc.text(`₵ ${item.unitPrice.toFixed(2)}`, 340, yPos);
+      doc.text(`GHC ${item.unitPrice.toFixed(2)}`, 340, yPos);
       const amount = (item.quantity * item.unitPrice).toFixed(2);
-      doc.text(`₵ ${amount}`, 430, yPos);
+      doc.text(`GHC ${amount}`, 430, yPos);
       yPos += 15;
       if (yPos > 760) {
         doc.addPage();
@@ -147,9 +146,9 @@ function CreateInvoice() {
     });
 
     yPos += 20;
-    doc.text(`Subtotal: ₵ ${invoiceData.subtotal.toFixed(2)}`, marginLeft, yPos);
+    doc.text(`Subtotal: GHC ${invoiceData.subtotal.toFixed(2)}`, marginLeft, yPos);
     yPos += 15;
-    doc.text(`Total: ₵ ${invoiceData.total.toFixed(2)}`, marginLeft, yPos);
+    doc.text(`Total: GHC ${invoiceData.total.toFixed(2)}`, marginLeft, yPos);
 
     const pdfUrl = doc.output('bloburl');
     window.open(pdfUrl, '_blank');
@@ -175,8 +174,7 @@ function CreateInvoice() {
         subtotal: calculateSubtotal(),
         total: calculateTotal(),
         status: 'draft',
-        createdAt: new Date().toISOString(),
-        id: uuidv4()
+        createdAt: new Date().toISOString()
       };
 
       console.log('Creating invoice with data:', invoiceData);
